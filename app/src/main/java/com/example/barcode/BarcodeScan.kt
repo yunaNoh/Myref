@@ -2,6 +2,7 @@ package com.example.barcode
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.SurfaceHolder
@@ -36,6 +37,15 @@ class BarcodeScan : AppCompatActivity() {
                 arrayOf(Manifest.permission.CAMERA),
                 CAMERA_PERMISSION_REQUEST_CODE
             )
+        }
+        binding.btnAction.setOnClickListener {
+            if (intentData.isNotEmpty()) {
+                val intent = Intent(this, MyRefrigerator::class.java)
+                intent.putExtra("intentDataKey", intentData)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "바코드가 아직 스캔되지 않았습니다", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -75,7 +85,7 @@ class BarcodeScan : AppCompatActivity() {
                 val barcodes = detections.detectedItems
                 if (barcodes.size() != 0) {
                     binding.textBarcodeValue.post {
-                        binding.btnAction.text = "상품 검색"
+                        binding.btnAction.text = "바코드 확인"
                         intentData = barcodes.valueAt(0).displayValue
                         binding.textBarcodeValue.text = intentData
                     }
