@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.SurfaceHolder
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,15 +19,20 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import java.io.IOException
 
 class BarcodeScan : AppCompatActivity() {
-    private lateinit var binding: ActivityBarcodeScanBinding
+    private val binding: ActivityBarcodeScanBinding by lazy {
+        ActivityBarcodeScanBinding.inflate(layoutInflater).also {
+            setContentView(it.root)
+        }
+    }
+
     private lateinit var barcodeDetector: BarcodeDetector
     private lateinit var cameraSource: CameraSource
     private var intentData = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityBarcodeScanBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+//        setContentView(binding.root)
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED
         ) {
@@ -45,6 +51,9 @@ class BarcodeScan : AppCompatActivity() {
                 startActivity(intent)
             } else {
                 Toast.makeText(this, "바코드가 아직 스캔되지 않았습니다", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MyRefrigerator::class.java)
+                intent.putExtra("intentDataKey", "intentData")
+                startActivity(intent)
             }
         }
     }
@@ -69,7 +78,13 @@ class BarcodeScan : AppCompatActivity() {
                 }
             }
 
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
+            override fun surfaceChanged(
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int,
+            ) {
+            }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 cameraSource.stop()
@@ -94,7 +109,11 @@ class BarcodeScan : AppCompatActivity() {
         })
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
