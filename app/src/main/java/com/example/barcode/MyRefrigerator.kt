@@ -13,16 +13,33 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 class MyRefrigerator : AppCompatActivity() {
-    interface ProductApiService {
-        @GET("products")
-        fun getProductByBarcode(@Query("barcode") barcode: String): Call<Product>
-    }
+    data class ApiResponse(
+        val C005: ResponseDetails
+    )
+
+    data class ResponseDetails(
+        val total_count: String,
+        val row: List<Product>,
+        val RESULT: ApiResult
+    )
+
+    data class ApiResult(
+        val MSG: String,
+        val CODE: String
+    )
 
     data class Product(
-        val name: String,
-        val price: Double,
-        val description: String
+        val PRDLST_NM: String, // 제품명
+        val POG_DAYCNT: String, // 소비기한
+        val PRDLST_DCNM: String, // 식품 유형
+        val SITE_ADDR: String, // 주소
+        val BAR_CD: String, // 바코드
+        val BSSH_NM: String // 회사명
     )
+    interface ProductApiService {
+        @GET("C005/json/1/5/")
+        fun getProductByBarcode(@Query("BAR_CD") barcode: String): Call<ApiResponse>
+    }
 
     private lateinit var binding: ActivityMyRefrigeratorBinding
 
@@ -32,32 +49,40 @@ class MyRefrigerator : AppCompatActivity() {
         setContentView(binding.root)
 
         val intentData = intent.getStringExtra("intentDataKey") ?: "바코드 정보 없음"
-        binding.textView.text = intentData
-//        if (intentData != "바코드 정보 없음") {
-//            val retrofit = Retrofit.Builder()
-//                .baseUrl("https://your-api-url.com/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build()
-//
-//            val apiService = retrofit.create(ProductApiService::class.java)
-//            apiService.getProductByBarcode(intentData).enqueue(object : Callback<Product> {
-//                override fun onResponse(call: Call<Product>, response: Response<Product>) {
-//                    if (response.isSuccessful) {
-//                        response.body()?.let { product ->
-//                            binding.textView.text = product.name
-//                            Log.d("MyRefrigerator", "Product name: ${product.name}")
-//                            Log.d("MyRefrigerator", "Product : ${product}")
-//                        }
-//                    } else {
-//                        Log.e("MyRefrigerator", "Response not successful")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<Product>, t: Throwable) {
-//                    Log.e("MyRefrigerator", "Error fetching product data", t)
-//                    Toast.makeText(this@MyRefrigerator, "제품 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_LONG).show()
-//                }
-//            })
-//        }
+
+        if (intentData != "바코드 정보 없음") {
+            val retrofit = Retrofit.Builder()
+                .baseUrl("https://openapi.foodsafetykorea.go.kr/api/0cca38a8d99f4fe89e1d/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val apiService = retrofit.create(ProductApiService::class.java)
+            apiService.getProductByBarcode(intentData).enqueue(object : Callback<ApiResponse> {
+                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                    if (response.isSuccessful) {
+                        response.body()?.let { apiResponse ->
+                            val product = apiResponse.C005.row.firstOrNull()
+                            if (product != null) {
+                                binding.productionName.text = product.PRDLST_NM
+                                binding.productionDue.text = product.POG_DAYCNT
+                                binding.productionKind.text = product.PRDLST_DCNM
+
+                            } else {
+                                binding.productionName.text = "제품 정보가 없습니다"
+                                binding.productionDue.text = "제품 정보가 없습니다"
+                                binding.productionKind.text = "제품 정보가 없습니다"
+                            }
+                        }
+                    } else {
+                        Log.e("MyRefrigerator", "Response not successful: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                    Log.e("MyRefrigerator", "Error fetching product data", t)
+                    Toast.makeText(this@MyRefrigerator, "제품 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
     }
 }
