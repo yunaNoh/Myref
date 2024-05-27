@@ -26,7 +26,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Firebase 초기화 확인 및 실행
-        binding.
+        binding.signupBtn.setOnClickListener{
+            val intent = Intent(this, Signup::class.java)
+            startActivity(intent)
+        }
         binding.loginBtn.setOnClickListener {
             auth = Firebase.auth
             val email = binding.emailText.text.toString()
@@ -36,8 +39,6 @@ class MainActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         val intent = Intent(this, SelectButton::class.java)
                         startActivity(intent)
-                    } else {
-                        binding.loginError.text = "로그인 실패"
                     }
                 }
         }
