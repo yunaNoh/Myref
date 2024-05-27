@@ -29,7 +29,7 @@
             android:name=".SelectButton"
             android:exported="false" />
         <activity
-            android:name=".MyRefrigerator"
+            android:name=".SaveBarcodeData"
             android:exported="false" />
         <activity
             android:name=".BarcodeScan"

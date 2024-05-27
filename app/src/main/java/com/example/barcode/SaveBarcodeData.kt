@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.barcode.databinding.ActivityBarcodeScanBinding
 import com.example.barcode.databinding.ActivityMyRefrigeratorBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -16,9 +15,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import kotlin.system.exitProcess
 
-class MyRefrigerator : AppCompatActivity() {
+class SaveBarcodeData : AppCompatActivity() {
     data class ApiResponse(
         val C005: ResponseDetails
     )
@@ -87,7 +85,7 @@ class MyRefrigerator : AppCompatActivity() {
 
                 override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
                     Log.e("MyRefrigerator", "Error fetching product data", t)
-                    Toast.makeText(this@MyRefrigerator, "제품 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SaveBarcodeData, "제품 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_LONG).show()
                 }
             })
         }

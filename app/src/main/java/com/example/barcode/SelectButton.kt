@@ -36,6 +36,10 @@ class SelectButton : AppCompatActivity() {
         binding.barcodeScanBtn.setOnClickListener {
             requestCamera?.launch(Manifest.permission.CAMERA)
         }
+        binding.homeBtn.setOnClickListener{
+            val intent = Intent(this, HomePage::class.java)
+            startActivity(intent)
+        }
     }
 
     // 바코드 스캔 액티비티 시작 함수
