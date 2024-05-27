@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Firebase 초기화 확인 및 실행
+        binding.
         binding.loginBtn.setOnClickListener {
             auth = Firebase.auth
             val email = binding.emailText.text.toString()
