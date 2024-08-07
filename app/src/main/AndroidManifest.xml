@@ -20,6 +20,15 @@
         android:theme="@style/Theme.Barcode"
         tools:targetApi="31">
         <activity
+            android:name=".IngredientAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".IngredientListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ingredientAdapter"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
